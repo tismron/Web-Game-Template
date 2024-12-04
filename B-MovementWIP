@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brython Snake</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.8.9/brython.min.js">
+    </script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/brython@3.8.9/brython_stdlib.js">
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <style>
+        body{
+            background-color: black;
+            display: grid;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            width: 400px;
+            height: 600px;
+            margin: 0 auto;
+            display: block;
+            border-style: solid;
+            border-color: #ffffff;
+        }
+
+    </style>
+
+</head>
+
+<body onload="brython()">
+    <div class="content">
+        <canvas id="game-board" width="400" height="400"></canvas>
+    </div>
+
+    <script type="text/python">
+
+        from browser import document, html, window
+        import random
+
+        pX = 50
+        pY = 350
+        gs =  20
+        tc = 400
+        ax = ay = 15
+        xv = yv = 0
+        vel = 0.5    
+        isJump = False
+        staticJumpCount = 32
+        jumpCount = staticJumpCount
+        kValue = 0
+
+        def game():
+            global pX, pY, tc, gs, ax, ay, trail, tail
+            pX += xv
+            pY += yv
+            
+            # background of canvas
+            ctx.fillStyle = "green"
+            ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+            # Snake head
+            ctx.fillStyle = "lime"
+            ctx.fillRect(pX, pY, gs-2, gs-2)
+
+            # Wall collision 
+            if pX < 0:
+                pX = tc-1
+            if pX > tc-1:
+                pX = 0
+            if pY < 0:
+                pY = tc-1
+            if pY > tc-1:
+                pY = 0
+            
+            if pY >= 350:
+                if jumpCount >= -staticJumpCount:
+                    pY -= (jumpCount * abs(jumpCount)) * 0.1
+                    jumpCount -= 2 
+                    
+                else: 
+                    jumpCount = staticJumpCount
+                    isJump = False
+            
+            
+                
+        # Snake Movement
+        def on_press(evt):
+            global xv, yv
+            key = evt.keyCode
+            if key == 37 and xv >= -48 and xv <= 48:
+                xv -= 8*vel
+            elif key == 39:
+                xv += 8*vel
+            elif key == 32:
+                temp = [xv, yv]
+            if xv >= 48:
+                xv = 48
+            elif xv <= -48:
+                xv = -48
+
+
+        def on_release(kValue):
+            global xv, yv
+            i = 1
+            while xv > 0.5:
+                xv -= 0.5*i
+                
+                        
+        # Canvas game element
+        canvas = document["game-board"]
+        ctx = canvas.getContext("2d")
+
+        # Moves the snake on key down using the on_press function
+        document.addEventListener("keydown", on_press)
+        document.addEventListener("keyup", on_release)
+
+        # Creates the game loop
+        game_loop = window.setInterval(game, 1000/10)
+
+</script>
+
+</body>
+
+</html>
